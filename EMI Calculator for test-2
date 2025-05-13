@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EMI Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #6dd5ed, #2193b0);
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      background: #fff;
+      padding: 30px;
+      margin: 50px auto;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      color: #2193b0;
+    }
+    label {
+      display: block;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+    input[type=range] {
+      width: 100%;
+    }
+    .slider-value {
+      font-size: 14px;
+      text-align: right;
+      color: #555;
+    }
+    button {
+      margin-top: 25px;
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      color: #fff;
+      background: #2193b0;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #17607d;
+    }
+    .results {
+      margin-top: 30px;
+      background: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+    }
+    .result-item {
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>EMI Calculator</h2>
+
+    <label for="loanAmount">Loan Amount (₹):</label>
+    <input type="range" id="loanAmount" min="10000" max="2000000" step="10000" value="500000" oninput="updateValue('loanAmount', 'loanVal')">
+    <div class="slider-value">₹<span id="loanVal">500000</span></div>
+
+    <label for="interestRate">Annual Interest Rate (%):</label>
+    <input type="range" id="interestRate" min="1" max="20" step="1" value="10" oninput="updateValue('interestRate', 'rateVal')">
+    <div class="slider-value"><span id="rateVal">10</span>%</div>
+
+    <label for="loanTenure">Loan Tenure (Months):</label>
+    <input type="range" id="loanTenure" min="6" max="240" step="6" value="60" oninput="updateValue('loanTenure', 'tenureVal')">
+    <div class="slider-value"><span id="tenureVal">60</span> months</div>
+
+    <button onclick="calculateEMI()">Calculate EMI</button>
+
+    <div class="results" id="results" style="display: none;">
+      <div class="result-item" id="emiResult"></div>
+      <div class="result-item" id="interestResult"></div>
+      <div class="result-item" id="totalResult"></div>
+    </div>
+  </div>
+
+  <script>
+    function updateValue(sliderId, displayId) {
+      document.getElementById(displayId).textContent = document.getElementById(sliderId).value;
+    }
+
+    function calculateEMI() {
+      const principal = parseInt(document.getElementById('loanAmount').value);
+      const annualRate = parseInt(document.getElementById('interestRate').value);
+      const months = parseInt(document.getElementById('loanTenure').value);
+
+      const monthlyRate = annualRate / 12 / 100;
+      const emi = (principal * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+      const totalPayment = emi * months;
+      const totalInterest = totalPayment - principal;
+
+      document.getElementById('emiResult').innerText = "Monthly EMI: ₹" + Math.round(emi);
+      document.getElementById('interestResult').innerText = "Total Interest: ₹" + Math.round(totalInterest);
+      document.getElementById('totalResult').innerText = "Total Payable: ₹" + Math.round(totalPayment);
+      document.getElementById('results').style.display = "block";
+    }
+  </script>
+</body>
+</html>
